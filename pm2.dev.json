@@ -1,0 +1,24 @@
+{
+  "apps": [
+    {
+      "name": "api-dev",
+      "cwd": "./",
+      "script": "src/app/index.js",
+      "log_date_format": "YYYY-MM-DD HH:mm Z",
+      "watch": true,
+      "ignore_watch": [
+        "[\\/\\\\]\\./",
+        "node_modules",
+        ".git",
+        "logs",
+        "nosy_modules"
+      ],
+      "merge_logs": true,
+      "env": {
+        "NODE_ENV": "development",
+        "NODE_DEBUG": "request",
+        "args": ["--ignore-watch=.git|node_modules"]
+      }
+    }
+  ]
+}
