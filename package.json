@@ -1,0 +1,19 @@
+{
+  "name": "cash-bus-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/rick2017/cash-bus-api.git"
+  },
+  "author": "rick lee",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/rick2017/cash-bus-api/issues"
+  },
+  "homepage": "https://gitlab.com/rick2017/cash-bus-api#README"
+}
