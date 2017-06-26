@@ -1,9 +1,9 @@
 {
   "apps": [
     {
-      "name": "cash-bus-api-dev",
+      "name": "cash-bus-api-prd",
       "cwd": "./",
-      "script": "src/app/index.js",
+      "script": "build/app/index.js",
       "log_date_format": "YYYY-MM-DD HH:mm Z",
       "watch": true,
       "ignore_watch": [
@@ -15,7 +15,7 @@
       ],
       "merge_logs": true,
       "env": {
-        "NODE_ENV": "development",
+        "NODE_ENV": "production",
         "NODE_DEBUG": "request",
         "args": ["--ignore-watch=.git|node_modules"]
       }

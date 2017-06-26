@@ -2,10 +2,22 @@
 import mongoose, { Schema } from 'mongoose'
 
 const UserSchema = new Schema({
-  username: {
-    type: String,
-    trim: true,
-    required: 'Username is required!!'
+  telephone: {
+    type: String
+  },
+  openid: {
+    type: String
+  },
+  unionid: {
+    type: String
+  },
+  userInfo: {
+    nickname: {
+      type: String
+    },
+    headImgUrl: {
+      type: String
+    }
   }
 },{
   timestamps:true
