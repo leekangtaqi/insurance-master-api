@@ -3,7 +3,7 @@
     {
       "name": "cash-bus-api-prd",
       "cwd": "./",
-      "script": "build/app/index.js",
+      "script": "build/index.js",
       "log_date_format": "YYYY-MM-DD HH:mm Z",
       "watch": true,
       "ignore_watch": [
