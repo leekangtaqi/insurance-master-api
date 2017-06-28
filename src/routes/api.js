@@ -8,5 +8,7 @@ export default function Api(router) {
 
   mount('/user', userApi)(router)
 
+  // mount('/wechat', wechatApi)
+
   return router 
 }

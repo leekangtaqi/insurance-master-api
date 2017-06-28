@@ -3,7 +3,9 @@ export default {
   mongo: {
     host: "127.0.0.1",
     port: 27017,
-    db: "wenode"
+    db: "wenode",
+    username: 'root',
+    password: "Kang1x2IOAOb4AIcom"
   },
   mysql: {
     host: "127.0.0.1",
