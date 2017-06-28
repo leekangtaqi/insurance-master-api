@@ -1,4 +1,5 @@
 before_script:
+   - cd sources
    - echo "Before script section"
    - echo "For example you might run an update here or install a build dependency"
    - echo "Or perhaps you might print out some debugging details"
