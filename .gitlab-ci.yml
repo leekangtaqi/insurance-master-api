@@ -28,3 +28,4 @@ deploy1:
  stage: deploy
  script:
    - echo "Do your deploy here"
+   - pm2 start pm2.dev.json
