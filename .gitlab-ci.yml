@@ -1,4 +1,7 @@
-image: node:latest
+cache:
+  paths:
+  - node_modules/
+
 before_script:
    - echo "Before script section"
    - whoami
@@ -9,7 +12,10 @@ after_script:
   - echo "After script section"
   - echo "For example you might do some cleanup here"
    
-deploy1:
+deploy:
  stage: deploy
  script:
-   - /home/www/cash-bus-api/deploy/dev.sh
+  - git pull origin master
+  - npm config set registry https://registry.npm.taobao.org
+  - npm install
+  - pm2 restart cash-bus-api-dev
