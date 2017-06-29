@@ -1,3 +1,4 @@
+image: node:latest
 before_script:
    - echo "Before script section"
    - whoami
@@ -13,5 +14,6 @@ deploy1:
  script:
    - echo "Do your deploy here111"
    - whoami
+   - npm install -g pm2
    - pwd
    - pm2 start pm2.dev.json
