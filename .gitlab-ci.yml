@@ -1,8 +1,6 @@
 before_script:
-   - source ~/.bash_profile
-   - source ~/.bashrc
-   - whoami
    - echo "Before script section"
+   - whoami
    - echo "For example you might run an update here or install a build dependency"
    - echo "Or perhaps you might print out some debugging details"
    
