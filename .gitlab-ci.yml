@@ -13,7 +13,6 @@ deploy1:
  stage: deploy
  script:
    - echo "Do your deploy here111"
-   - whoami
    - npm config set registry http://registry.cnpmjs.org/
    - npm install -g pm2
    - pwd
