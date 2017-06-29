@@ -14,6 +14,7 @@ deploy1:
  script:
    - echo "Do your deploy here111"
    - npm config set registry http://registry.cnpmjs.org/
+   - npm install
    - npm install -g pm2
    - npm run build
    - cp ./src/app/logging.json ./build/app/logging.json
