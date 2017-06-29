@@ -12,7 +12,7 @@ after_script:
 deploy1:
  stage: deploy
  script:
-   - echo "Do your deploy here1112224444"
+   - echo "Do your deploy 22"
    - npm config set registry http://registry.cnpmjs.org/
    - npm install
    - npm install -g pm2
