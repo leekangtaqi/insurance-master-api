@@ -12,4 +12,4 @@ after_script:
 deploy1:
  stage: deploy
  script:
-   - ./home/www/cash-bus-api/deploy/dev.sh
+   - /home/www/cash-bus-api/deploy/dev.sh
