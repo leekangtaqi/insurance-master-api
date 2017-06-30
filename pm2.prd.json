@@ -1,11 +1,11 @@
 {
   "apps": [
     {
-      "name": "cash-bus-api-prd",
+      "name": "insurance-master-api-prd",
       "cwd": "./",
       "script": "build/index.js",
       "log_date_format": "YYYY-MM-DD HH:mm Z",
-      "watch": true,
+      "watch": false,
       "ignore_watch": [
         "[\\/\\\\]\\./",
         "node_modules",

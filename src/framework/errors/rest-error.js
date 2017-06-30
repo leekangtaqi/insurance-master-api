@@ -1,6 +1,6 @@
 import util from 'util'
 
-function RestError({ restCode, statusCode, message, constructorOpt }){
+function RestError({ restCode, statusCode, message, constructorOpt }) {
   this.restCode = restCode;
   this.statusCode = restCode;
   this.message = restCode;
@@ -10,7 +10,7 @@ function RestError({ restCode, statusCode, message, constructorOpt }){
 
 util.inherits(RestError, Error)
 
-function register(constrName, statusCode, message){
+function register(constrName, statusCode, message) {
   
   const Contrs = new Function(`options`, `
     this.restCode = options && options.restCode || null;

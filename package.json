@@ -1,5 +1,5 @@
 {
-  "name": "cash-bus-api",
+  "name": "insurance-master-api",
   "version": "1.0.0",
   "description": "",
   "main": "build/index.js",
@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.com:rick2017/cash-bus-api.git"
+    "url": "git@gitlab.com:rick2017/insurance-master-api.git"
   },
   "author": "leekangtaqi",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/rick2017/cash-bus-api/issues"
+    "url": "https://gitlab.com/rick2017/insurance-master-api/issues"
   },
-  "homepage": "https://gitlab.com/rick2017/cash-bus-api#readme",
+  "homepage": "https://gitlab.com/rick2017/insurance-master-api#readme",
   "dependencies": {
     "bluebird": "^3.5.0",
     "chalk": "^1.1.3",

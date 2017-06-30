@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "cash-bus-api-dev",
+      "name": "insurance-master-api-dev",
       "cwd": "./",
       "script": "build/index.js",
       "log_date_format": "YYYY-MM-DD HH:mm Z",
