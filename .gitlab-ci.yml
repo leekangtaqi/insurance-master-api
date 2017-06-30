@@ -5,4 +5,5 @@ cache:
 deploy:
  stage: deploy
  script:
-  - /home/www/cash-bus-api/deploy/dev
+  - echo pwd
+  - /home/www/cash-bus-api/deploy/dev.sh
