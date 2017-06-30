@@ -23,7 +23,7 @@ export default class UserController {
 
   async getSessionKey(ctx) {
     let {  services, errors, Res, props } = ctx.app.ctx
-    let res = await services.UserService().getSessionKey(ctx.request.query)
+    let res = await services.UserService().getSessionKey(ctx.request.query.code)
     if (res.errcode) {
       return this.body = Res(props.code.FAILED, props.messages.REQUEST_FAILED)
     }
