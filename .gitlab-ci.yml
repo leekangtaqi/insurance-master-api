@@ -3,7 +3,7 @@ cache:
   - node_modules/
 
 deploy_prd:
- stage: deploy_prd
+ stage: deploy
  only: 
   - master
  script:
