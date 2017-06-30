@@ -45,4 +45,4 @@ deploy_prd:
     - master
   script:
     - cp src/app/logging.json build/app/logging.json
-    - pm2 start pm2.dev.json
+    - pm2 start ./deploy/pm2.dev.json
