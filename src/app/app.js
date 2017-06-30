@@ -9,7 +9,7 @@ import bodyParser from 'koa-body'
 import mountRoutes from '../routes'
 import errors from '../framework/errors'
 import context, { load } from './context'
-console.warn('hahahahaah!!!!!!!!!')
+
 const app = new Koa()
 app.env = process.env.NODE_ENV || config.env.mode;
 app.proxy = true;
