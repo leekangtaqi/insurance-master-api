@@ -6,4 +6,4 @@ deploy:
  stage: deploy
  script:
   - echo pwd
-  - /home/www/cash-bus-api/deploy/dev.sh
+  - ssh root@123.57.26.201 "/home/www/cash-bus-api/deploy/dev.sh"
