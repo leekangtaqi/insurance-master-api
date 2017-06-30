@@ -1,0 +1,62 @@
+# stages:
+#   - install_deps
+#   - test
+#   - build
+#   - deploy_test
+#   - deploy_production
+
+cache:
+  paths:
+  - node_modules/
+
+# install dependencies
+# install_deps:
+#   stage: install_deps
+#   only:
+#     - develop
+#     - master
+#   script:
+#     - npm install
+
+# # run test
+# test:
+#   stage: test
+#   only:
+#     - develop
+#     - master
+#   script:
+#     - npm run test
+
+# # run build
+# build:
+#   stage: build
+#   only:
+#     - develop
+#     - master
+#   script:
+#     - npm run build
+
+# deploy qa
+# deploy_qa:
+#  stage: deploy_qa
+#  only: 
+#   - develop
+#  script:
+#   - git remote -v
+#   - git remote set-url origin git@gitlab.com:rick2017/cash-bus-api.git
+#   - git pull origin master
+#   - npm config set registry https://registry.npm.taobao.org
+#   - npm install
+#   - pm2 restart cash-bus-api-dev
+
+deploy_prd:
+ stage: deploy_prd
+ only: 
+  - master
+ script:
+  - git remote -v
+  - pwd
+  - git pull origin master
+  - npm config set registry https://registry.npm.taobao.org
+  - npm install
+  - pm2 restart cash-bus-api-dev
