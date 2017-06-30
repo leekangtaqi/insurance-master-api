@@ -1,17 +1,19 @@
 {
-  "apps":[{
-    "name"             : "insurance-master-api-prd",
-    "cwd"              : "./",
-    "script"           : "build/index.js",
-    "log_date_format"  : "YYYY-MM-DD HH:mm Z",
-    "merge_logs"       : true,
-    "exec_mode"        : "cluster_mode",
-    "instances"        : 4,
-    "env": {
-      "NODE_ENV"        : "production",
-      "NODE_DEBUG"      : "request",
-      "DOCKER_NODEJS_PORT":9191
-    },
-    "args"             : ["--color"]
-  }]
+  "apps":[
+    {
+      "name"             : "insurance-master-api-prd",
+      "cwd"              : "./",
+      "script"           : "build/index.js",
+      "log_date_format"  : "YYYY-MM-DD HH:mm Z",
+      "merge_logs"       : true,
+      "exec_mode"        : "cluster_mode",
+      "instances"        : 4,
+      "env": {
+        "NODE_ENV"        : "production",
+        "NODE_DEBUG"      : "request",
+        "DOCKER_NODEJS_PORT":9191
+      },
+      "args"             : ["--color"]
+    }
+  ]
 }
