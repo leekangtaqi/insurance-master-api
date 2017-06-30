@@ -1,6 +1,6 @@
 'use strict';
 import mongoose, { Schema } from 'mongoose'
-
+    
 const UserSchema = new Schema({
   telephone: {
     type: String
@@ -11,11 +11,32 @@ const UserSchema = new Schema({
   unionid: {
     type: String
   },
-  userInfo: {
-    nickname: {
+  nickName: {
+    type: String
+  },
+  headImgUrl: {
+    type: String
+  },
+  gender: {
+    type: String
+  },
+  city: {
+    type: String
+  },
+  province: {
+    type: String
+  },
+  country: {
+    type: String
+  },
+  avatarUrl: {
+    type: String
+  },
+  watermark: {
+    "appid": {
       type: String
     },
-    headImgUrl: {
+    "timestamp": {
       type: String
     }
   }

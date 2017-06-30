@@ -51,5 +51,11 @@ export default {
     Origin: '*',
     methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE'],
     credentials: true
+  },
+  wx: {
+    wxApp: {
+      appid: 'wx17e63937c7fc1a11',
+      appSecret: '225e6db48eb5221525dae873f492e5a8'
+    }
   }
 }
