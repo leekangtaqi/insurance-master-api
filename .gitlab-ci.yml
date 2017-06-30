@@ -42,5 +42,6 @@ deploy_prd:
   only: 
     - master
   script:
+    - cd /home/www/cash-bus-api
     - cp src/app/logging.json build/app/logging.json
     - pm2 restart cash-bus-api-dev
