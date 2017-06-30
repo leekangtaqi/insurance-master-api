@@ -9,10 +9,12 @@ cache:
   paths:
     - node_modules/
 
+before_script:
+  - cd /home/www/cash-bus-api
+
 install_deps:
   stage: install_deps
   script:
-    - cd /home/www/cash-bus-api
     - git pull origin master
     - npm config set registry https://registry.npm.taobao.org
     - npm install
@@ -42,6 +44,5 @@ deploy_prd:
   only: 
     - master
   script:
-    - cd /home/www/cash-bus-api
     - cp src/app/logging.json build/app/logging.json
     - pm2 restart cash-bus-api-dev
