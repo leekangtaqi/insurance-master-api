@@ -3,9 +3,10 @@ export default {
   mongo: {
     host: "127.0.0.1",
     port: 27017,
-    db: "admin",
-    username: 'root',
-    password: "Kang1x2IOAOb4AIcom"
+    db: "wenode",
+    // db: "admin",
+    // username: 'root',
+    // password: "Kang1x2IOAOb4AIcom"
   },
   mysql: {
     host: "127.0.0.1",
@@ -18,7 +19,7 @@ export default {
     mode: 'single',
     host: '127.0.0.1',
     port: 6379,
-    auth: 'Deploy100%'
+    // auth: 'Deploy100%'
   },
   logging: {
     reloadSecs: 0, //INFO: set 0 could let nodeunit tests which use log4js exit properly

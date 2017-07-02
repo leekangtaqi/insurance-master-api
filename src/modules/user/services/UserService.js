@@ -7,6 +7,19 @@ export default class UserService {
     this.context = context;
   }
 
+  async fetch(user) {
+    // unionid
+    if (!user.openid) {
+      throw new this.context.errors.NoOpenid()
+    }
+    let User = this.context.models.User
+    let doc = await User.findOne({ openid }).exec()
+    if (!doc) {
+      doc = await this.create(user)
+    }
+    return doc
+  }
+
   async create(userMeta) {
     let User = this.context.models.User
     let user = new User(userMeta)
@@ -14,27 +27,10 @@ export default class UserService {
     return user
   }
 
-  async getSessionKey(code) {
-    let url = {
-      protocol: 'https',
-      host: 'api.weixin.qq.com/sns/jscode2session',
-      query: {
-        appid: this.context.config.wx.wxApp.appid,
-        secret: this.context.config.wx.wxApp.appSecret,
-        js_code: code,
-        grant_type: 'authorization_code'
-      }
-    }
-    return await request.get(url.format(url))
-  }
-
   async find() {
     let User = this.context.models.User
     return await User.find().exec()
   }
 
-  async decode(rawData, sessionKey, signature, encryptedData, iv) {
-    // todo security - signature === encode(rawData, sessionKey)
-    
-  }
+  
 }

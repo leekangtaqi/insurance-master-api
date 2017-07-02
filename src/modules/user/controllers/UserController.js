@@ -1,43 +1,45 @@
+import wxApp from '../../../framework/wechatApp'
+
 export default class UserController {
+  async getUserMid(ctx) {
+    let userId = ctx.request.query.userId
+    if (!ctx.user && userId) {
+      ctx.user = await ctx.app.ctx.services.UserService().findById(userId)
+    }
+  }
+
   async getUser(ctx) {
-    const { params, app } = ctx
+    let { services, errors, Res, props, logger } = ctx.app.ctx
     try {
-      let { errors } = app.ctx
-      let users = await app.ctx.services.UserService().find()
-      // let userTmp = users[1]
-      // await app.ctx.kvs.UserKv().save(userTmp)
-      // let user = await app.ctx.kvs.UserKv().loadById(userTmp.id)
-      ctx.body = users
+      if (ctx.user) {
+        return ctx.body = ctx.user
+      }
+      let users = await app.ctx.services.UserService().find(ctx.request.query)
+      return ctx.body = users
     } catch (e) {
       throw e
     }
   }
 
-  async getUserById(id) {
+  async onLogin(ctx) {
+    let {  services, errors, Res, props, logger } = ctx.app.ctx
     try {
-      console.warn('get user by id')
-    } catch (e) {
-      throw e
+      await wxApp.onLogin(ctx.request.body.code)
+      ctx.body = Res(props.code.SUCCESS, props.messages.SUCCESS)
+    } catch(e) {
+      logger.error(e)
+      ctx.body = Res(props.code.FAILED, props.messages.REQUEST_FAILED)
     }
   }
 
-  async getSessionKey(ctx) {
-    let {  services, errors, Res, props } = ctx.app.ctx
-    let res = await services.UserService().getSessionKey(ctx.request.query.code)
-    if (res.errcode) {
-      return this.body = Res(props.code.FAILED, props.messages.REQUEST_FAILED)
-    }
-    this.body = Res(props.code.SUCCESS, props.messages.SUCCESS, res)
-  }
-
-  async fetchUser(ctx) {
+  async login(ctx) {
     let { services, errors, Res, props } = ctx.app.ctx
-    let { rawData, signature, encryptedData, iv, sessionKey } = ctx.request.body
+    let { rawData, signature, encryptedData, iv } = ctx.request.body
     if (!rawData || !signature || !encryptedData || !iv) {
-      return this.body = Res(props.code.FAILED, props.messages.PARAM_FAILED)
+      return ctx.body = Res(props.code.FAILED, props.messages.PARAM_FAILED)
     }
-    let userRaw = await services.UserService().decode(rawData, sessionKey, signature, encryptedData, iv)
-    let user = await services.UserService().create(userRaw)
-    return this.body = Res(props.code.SUCCESS, props.messages.SUCCESS, user._id)
+    let userRaw = await wxApp.decode(rawData, signature, encryptedData, iv)
+    let user = await services.UserService().fetch(userRaw)
+    return ctx.body = Res(props.code.SUCCESS, props.messages.SUCCESS, { token: null, user })
   }
 }

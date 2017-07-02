@@ -2,13 +2,16 @@ import db from './db'
 import redisMainCreator from './redis'
 import Ar from '../framework/allready'
 import errors from '../framework/errors'
+import bizErrors from './errors'
 import props from './properties'
 import _ from './util'
 import { logger } from './logging'
+import config from '../config'
 
 const context = {
-  errors,
+  errors: { ...errors, ...bizErrors },
   props,
+  config,
   Res: (code, message, data) => ({
     code,
     meta: {
