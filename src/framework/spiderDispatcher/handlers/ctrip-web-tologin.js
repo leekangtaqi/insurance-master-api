@@ -2,6 +2,7 @@ require('babel-polyfill')
 const Handler = require('./handler')
 const types = require('../events-definition')
 const StateMachine = require('../state-machine')
+const util = require('./util')
 
 const ResType = {
   DONE: 'done',
@@ -11,82 +12,69 @@ const ResType = {
 
 class CtripWebToLogin extends Handler {
 
-  constructor(key, inbound, outbound={}) {
+  constructor(key) {
     super()
     this.key = key
-    this.inbound = inbound
-    this.outbound = outbound
     this.timeout = null
     this.fsm = new StateMachine({
       init: 'unlogin',
       transitions: [
-        { name: 'ctripWebToLogin', from: 'unlogin',  to: 'login' },
-        { name: 'ctripWebLogin',   from: 'login',    to: 'loggedin' },
-        { name: 'ctripWebToSpide', from: 'loggedin', to: 'spide' },
-        { name: 'ctripWebToDone',  from: 'spide',    to: 'done' }
+        { name: 'ctripWebTologin',   from: 'unlogin',   to: 'login' },
+        { name: 'ctripWebNeedlogin', from: 'login',     to: 'needLogin' },
+        { name: 'ctripWebLogin',     from: 'needLogin', to: 'loggedin' },
+        { name: 'ctripWebToSpide',   from: 'loggedin',  to: 'spide' },
+        { name: 'ctripWebToDone',    from: 'spide',     to: 'done' }
       ],
       methods: {
-        onCtripWebToLogin: this.onToLogin.bind(this),
-        onCtripWebLogin:   this.onLogin.bind(this),
-        onCtripWebToSpide: this.onToSpide.bind(this),
-        onCtripWebToDone:  this.onToDone.bind(this)
+        onCtripWebTologin:      this.onToLogin.bind(this),
+        onAfterCtripWebTologin: async () => {
+          await this.doAction('ctripWebNeedlogin', { vcode: this.vcode })
+        },
+        onCtripWebNeedlogin:    this.onCtripWebNeedlogin.bind(this),
+        onCtripWebLogin:        this.onLogin.bind(this),
+        onAfterCtripWebLogin:   async () => {
+          await this.doAction('ctripWebToSpide')
+        },
+        onCtripWebToSpide:      this.onToSpide.bind(this),
+        onAfterCtripWebToSpide:   async () => {
+          await this.doAction('ctripWebToDone')
+        },
+        onCtripWebToDone:       this.onToDone.bind(this)
       }
     })
-    process.on('message', ({ action, payload }) => {
-      switch (action) {
-        case 'toLogin':
-          this.fsm.doAction('ctripWebToLogin', payload)
-          break
-        case 'login':
-          this.fsm.doAction('ctripWebLogin', payload)
-          break
-        case 'toSpide':
-          this.fsm.doAction('ctripWebToSpide', payload)
-          break
-        case 'toDone':
-          this.fsm.doAction('ctripWebToDone', payload)
-          break
-      }
+    process.on('message', async ({ action, payload }) => {
+      await this.fsm.doAction(action, payload)
     })
-  }
-
-  async handle(key) {
-    console.warn('ctrip web to login startup.')
   }
 
   async onToLogin() {
-    let vCode = await this.executor
-      .goto('http://www.ctrip.com/')
-      .click('#c_ph_login')
-      .click('#txtUserName')
-      .evaluate(function() {
-        return document.querySelector('#imgCode').src
-      })
-    this.vcode = vCode
-    this.needVcode = this.vCodeNeeded(vCode)
-    if (!this.needVcode) {
-      this.vcode = null
-    }
-    this.request({ action: 'ctripWebToLogin', key, payload: { vcode: this.vcode }}, { timeout: 60*1000})
-  }
-
-  async request(payload, opts) {
-    process.send(payload)
-    this.timeout = setTimeout(function() {
-      this.destroy(ResType.ABORT)
-    }, opts.timeout)
-  }
-
-  /**
-   * Notify dispatcher and close process.
-   * @param {enum} type => <Done, Abort, Expection>
-   */
-  async destroy(type) {
     try {
-      process.send({ action: 'ctripWebToDone', origin: 'ctripWebToLogin', error: { message: type }, key })
-      this.executor.end()
-      process.exit()
-    } catch (e) {}
+      let vCode = await this.executor
+        .goto('http://www.ctrip.com/')
+        .click('#c_ph_login')
+        .click('#txtUserName')
+        .evaluate(function() {
+          return document.querySelector('#imgCode').src
+        })
+      this.vcode = vCode
+      this.needVcode = util.vCodeNeeded(vCode)
+      if (!this.needVcode) {
+        this.vcode = null
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  async onCtripWebNeedlogin(payload) {
+    process.once('message', async ({ action, payload }) => {
+      if (action === 'ctripWebNeedloginRequest') {
+        await this.doAction('onCtripWebLogin', payload)
+      }
+    })
+    payload.key = this.key
+    payload.action = 'ctripWebNeedlogin'
+    process.send({ action: 'ctripWebTologinResponse', payload, error: null })
   }
 
   async onLogin(payload) {
@@ -108,33 +96,24 @@ class CtripWebToLogin extends Handler {
     }
 
     await this.executor.click('#btnSubmit')
-
-    await this.fsm.doAction('ctripWebToSpide', key)
   }
 
   async onToSpide() {
     await this.executor
       .wait('#c_ph_myhome')
       .click('#c_ph_myhome')
-
-    await this.fsm.doAction('ctripWebToDone', key)
   }
 
   async onToDone() {
-    process.send({ action: 'ctripWebToDone', key, payload: null})
-    await this.executor.end()
-  }
-
-  vCodeNeeded(vCode) {
-    return vCode && vCode != 'https://accounts.ctrip.com/member/images/pic_verificationcode.gif'
+    this.response({ action: 'ctripWebLoginResponse', payload: { key: this.key }})
+    await this.destroy()
   }
 
 }
 
 async function main () {
   let args = [...process.argv.slice(2)]
-  let handler = new CtripWebToLogin(args[0], args[1])
-  await handler.init(args[0])
+  new CtripWebToLogin(args[0], args[1])
 }
 
 main()

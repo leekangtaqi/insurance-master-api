@@ -6,5 +6,9 @@ module.exports = {
       }
       return p[0].toUpperCase() + p.slice(1)
     }).join('')
+  },
+
+  isPromise: function(o) {
+    return o && o.then && typeof o.then === 'function'
   }
 }

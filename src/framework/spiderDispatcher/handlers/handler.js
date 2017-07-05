@@ -1,74 +1,37 @@
 const Nightmare = require('nightmare')
 const types = require('../events-definition')
+const { EventEmitter } = require('events')
 
-module.exports =  class Handler {
+module.exports =  class Handler extends EventEmitter {
 
-  constructor() {}
-
-  async init(key) {
+  constructor() {
+    super()
     this.executor = new Nightmare({ show: true })
-    process.on('disconnect', this.onHandle.bind(this))
-    process.on('exit', this.onHandle.bind(this))
-    process.on('error', this.onHandle.bind(this))
-    await this.handle(key)
   }
 
-  async done(id) {
-    process.emit(this.prefix + '-' + this.type)
+  async request() {}
+
+  async response(data) {
+    process.send(data)
   }
 
-  async onHandle() {
+  async destroy() {
     try {
       await this.executor.end()
-    } catch(e) {
-      console.warn(`[Handler] process's expection occur.`)
-    }
+      process.exit()
+    } catch (e) {}
   }
 
-  async request(type, content, opts={}) {
+  async doAction(action, payload, opts) {
     try {
-      let timeout = opts.timeout
-      if (!opts.timeout) {
-        timeout = this.timeout
-      }
-      return new Promise((resolve, reject) => {      
-        let onSubscribe = async payload => {
-          let tid = setTimeout(function() {
-            process.removeListener(type, onSubscribe)
-            let err = new Error(`Failed to request, [code]=timeout`)
-            err.code = 500
-            return reject(err)
-          }, timeout)
-          let { key } = payload
-          if (key === content.key) {
-            process.removeListener('message', onSubscribe)
-            resolve(payload)
-          }
-        }
-        process.on('message', ({ action, body }) => {
-          let { key } = body
-          if (type + '-response' && content.key === key){
-            onSubscribe(body)
-          }
-        })
-        process.send({ type: type, payload: content })
-      })
+      let res = await this.fsm.doAction(action, 
+        Object.assign({}, payload, { key: this.key, vcode: this.vcode }),
+        opts)
     } catch (e) {
-      console.warn(e)
+      if (e.code === 408) {
+        return this.destroy(ResType.TIMEOUT)
+      }
+      this.destroy(ResType.ABORT)
     }
-    
-  }
-
-  async destroy(key) {
-    await this.executor.end()
-    process.exit()
-  }
-
-  async done(key, payload) {
-    process.send({type: types.CTRIP_SPIDE_REQUEST_DONE, payload: Object.assign({ key }, payload)})
-  }
-
-  async handle(id) {
-    throw new Error(`method handle must be implement in subClass.`)
   }
 }

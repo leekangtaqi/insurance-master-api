@@ -1,65 +1,77 @@
 import 'babel-polyfill'
 import types from '../events-definition'
 import Dispatcher from './dispatcher'
-import { EventEmitter } from 'events'
 import StateMachine from '../state-machine'
 import _ from '../util'
 import childProcess from 'child_process'
 import path from 'path'
+import InterfaceRegister from './interfaceRegister'
 
 export default class Ctrip extends Dispatcher {
   constructor() {
     super()
-    this.prefix = 'ctrip'
-    this.defineWorkFlow([
-      types.CTRIP_SPIDE_REQUEST_INIT, 
-      [types.CTRIP_LOGIN_REQUEST, types.CTRIP_LOGIN_SIMPLE_REQUEST],
-      [types.CTRIP_LOGIN_REQUEST_RESPONSE, types.CTRIP_LOGIN_SIMPLE_REQUEST_RESPONSE],
-      types.CTRIP_SPIDE_REQUEST_DONE
+
+    this.interfaces = new InterfaceRegister([
+      {
+        name: 'ctripWebTologin',
+        ex: types.CTRIP_WEB_TOLOGIN,
+        children: [
+          {
+            name: 'ctripWebLogin',
+            ex: types.CTRIP_WEB_LOGIN
+          }
+        ]
+      }
     ])
-    this.on(types.CTRIP_LOGIN_REQUEST_RESPONSE, body => { this.resolve(types.CTRIP_LOGIN_REQUEST_RESPONSE, body) })
-    this.on(types.CTRIP_LOGIN_SIMPLE_REQUEST_RESPONSE, body => { this.resolve(types.CTRIP_LOGIN_SIMPLE_REQUEST_RESPONSE, body) })
   }
 
-  async resolve(event, body) {
-    let root1 = this.getWorker(event, body.key)
-    let { key, worker } = root1 
-    worker.send({action: event, body})
-  }
-
-  async destroy(key) {
-    await this.executor.end()
-    process.send({ type: types.CTRIP_PROCESS_DESTROY, payload: { key } })
-  }
-
-  getWorker(event, key) {
+  getWorker(action, key) {
     !this.workerMap && (this.workerMap = {})
-    return this.workerMap[event + key]
+    return this.workerMap[action + key]
   }
 
-  request(event, payload, callback) {
-    let interfaces = {
-      ctripWebTologin: 'ctripWebTologin'
-    }
-    let action = _.toCamel(event)
-    let concerned = interfaces[action]
-    let worker = this.getWorker(event, payload.key)
+  removeWorker(action, key) {
+    this.workerMap[action + key] = null
+  }
 
+  request(event, payload, callback=function noop(){}) {
+    
+    let action = _.toCamel(event)    
+
+    if (!this.interfaces.has(action)) {
+      callback(new Error(`no such action, [code]=${event}`))
+    }
+
+    let root = this.interfaces.getRoot(action)
+
+    if (root) {
+      event = root.ex
+    }
+    
+    let worker = this.getWorker(event, payload.key)
+    
     if (!worker) {
       worker = childProcess.fork(path.join(__dirname, '../handlers', event), [payload.key, payload.payload])
       this.workerMap[event + payload.key] = worker
     }
 
+    let originAction = action
+
     worker.send({ action, payload })
 
-    worker.on('error', onDone)
-    worker.on('exit', onDone)
-    worker.on('disconnect', onDone)
-    worker.on('message', ({ action, key, payload }) => {
-      
-    })
-    function onDone() {
+    worker.on('error', onError.bind(this))
+    worker.on('exit', onDone.bind(this))
 
+    worker.on('message', ({ action, payload, error }) => {
+      if (action === originAction + 'Response') {
+        callback(error, payload)
+      }
+    })
+    function onError() {
+      this.removeWorker(action, payload.key)
+    }
+    function onDone() {
+      this.removeWorker(action, payload.key)
     }
   }
 
