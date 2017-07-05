@@ -4,7 +4,7 @@
   "description": "",
   "main": "build/index.js",
   "scripts": {
-    "test": "mocha -t 5000 --compilers js:babel-register",
+    "test": "mocha -t 50000 --compilers js:babel-register",
     "start": "nodemon src/index.js --exec babel-node",
     "build": "babel src -d build",
     "serve": "node build/index.js",
