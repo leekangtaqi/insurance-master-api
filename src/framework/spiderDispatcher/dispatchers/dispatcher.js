@@ -4,6 +4,4 @@ import path from 'path'
 import types from '../events-definition'
 
 export default class SpiderDispatcher extends EventEmitter {
-
-
 }
