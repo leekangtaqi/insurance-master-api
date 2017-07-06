@@ -12,6 +12,7 @@ describe('UserService', () => {
     let code = '111'
     try {
       let res = await wechatApp.onLogin(code)
+      console.warn(res)
     } catch(e) {
       expect(e).to.not.be.null
     }

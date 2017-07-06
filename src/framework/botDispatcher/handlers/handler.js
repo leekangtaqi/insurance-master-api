@@ -2,16 +2,23 @@ const Nightmare = require('nightmare')
 const types = require('../events-definition')
 const { EventEmitter } = require('events')
 
+const ResType = {
+  DONE: 'done',
+  ABORT: 'abort',
+  EXCEPTION: 'exception'
+}
+
 module.exports =  class Handler extends EventEmitter {
 
   constructor() {
     super()
     this.executor = new Nightmare({ show: true })
+    process.on('unhandledRejection', error => {
+      this.ack({ action: types.EXCEPTION, payload: null, error: { message: error.message, code: error.code } })
+    })
   }
 
-  async request() {}
-
-  async response(data) {
+  ack(data) {
     process.send(data)
   }
 

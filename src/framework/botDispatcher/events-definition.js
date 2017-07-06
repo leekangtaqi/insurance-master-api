@@ -7,6 +7,7 @@ const CTRIP_LOGIN_SIMPLE_REQUEST = 'ctrip-login-simple-request'
 const CTRIP_PROCESS_DESTROY = 'ctrip-process-destroy'
 const CTRIP_WEB_TOLOGIN = 'ctrip-web-tologin'
 const CTRIP_WEB_LOGIN =  'ctrip-web-login'
+const EXCEPTION = 'exception'
 
 module.exports = {
   CTRIP_SPIDE_REQUEST_INIT,
@@ -17,5 +18,6 @@ module.exports = {
   CTRIP_LOGIN_SIMPLE_REQUEST,
   CTRIP_PROCESS_DESTROY,
   CTRIP_WEB_TOLOGIN,
-  CTRIP_WEB_LOGIN
+  CTRIP_WEB_LOGIN,
+  EXCEPTION
 }

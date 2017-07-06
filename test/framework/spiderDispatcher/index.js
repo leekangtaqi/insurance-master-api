@@ -1,5 +1,5 @@
-import dispatcher from '../../../src/framework/spiderDispatcher'
-import types from '../../../src/framework/spiderDispatcher/events-definition'
+import dispatcher from '../../../src/framework/botDispatcher'
+import types from '../../../src/framework/botDispatcher/events-definition'
 import { expect } from 'chai'
 
 describe('dispatch', () => {

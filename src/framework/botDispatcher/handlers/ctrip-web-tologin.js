@@ -4,12 +4,6 @@ const types = require('../events-definition')
 const StateMachine = require('../state-machine')
 const util = require('./util')
 
-const ResType = {
-  DONE: 'done',
-  ABORT: 'abort',
-  EXCEPTION: 'exception'
-}
-
 class CtripWebToLogin extends Handler {
 
   constructor(key) {
@@ -43,6 +37,9 @@ class CtripWebToLogin extends Handler {
       }
     })
     process.on('message', async ({ action, payload }) => {
+      if (action === 'ctripWebNeedloginRequest') {
+        return await this.doAction('onCtripWebLogin', payload)
+      }
       await this.fsm.doAction(action, payload)
     })
   }
@@ -67,14 +64,10 @@ class CtripWebToLogin extends Handler {
   }
 
   async onCtripWebNeedlogin(payload) {
-    process.once('message', async ({ action, payload }) => {
-      if (action === 'ctripWebNeedloginRequest') {
-        await this.doAction('onCtripWebLogin', payload)
-      }
-    })
     payload.key = this.key
     payload.action = 'ctripWebNeedlogin'
-    process.send({ action: 'ctripWebTologinResponse', payload, error: null })
+    payload.vcode = this.vcode
+    this.ack({ action: 'ctripWebTologinResponse', payload, error: null })
   }
 
   async onLogin(payload) {
@@ -105,7 +98,7 @@ class CtripWebToLogin extends Handler {
   }
 
   async onToDone() {
-    this.response({ action: 'ctripWebLoginResponse', payload: { key: this.key }})
+    this.ack({ action: 'ctripWebLoginResponse', payload: { key: this.key }})
     await this.destroy()
   }
 

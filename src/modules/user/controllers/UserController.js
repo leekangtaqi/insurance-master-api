@@ -1,4 +1,5 @@
 import wxApp from '../../../framework/wechatApp'
+import botDispatcher from '../../../framework/botDispatcher'
 
 export default class UserController {
   async getUserMid(ctx) {
