@@ -1,7 +1,6 @@
 export default class BotController {
 
   async toLoginByUserId(ctx) {
-    console.warn(this)
     let { services, errors, Res, props, logger } = ctx.app.ctx
     let { type, platform, userId } = ctx.request.query
 
